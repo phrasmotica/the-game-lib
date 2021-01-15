@@ -1,14 +1,11 @@
 {
   "name": "the-game-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Class library for The Game",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/esm/index.js",
-  "files": [
-    "lib/"
-  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "tsc": "tsc -p tsconfig.json",
     "prepublishOnly": "npm run tsc"
   },
   "author": "phrasmotica",
