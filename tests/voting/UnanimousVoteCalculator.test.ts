@@ -1,5 +1,5 @@
-import { UnanimousVoteCalculator } from "../../../src/models/voting/UnanimousVoteCalculator"
-import { createVote } from "../../TestHelpers"
+import { UnanimousVoteCalculator } from "../../src/voting/UnanimousVoteCalculator"
+import { createVote } from "../TestHelpers"
 
 describe("unanimous vote calculator", () => {
     it("returns winner when votes have been cast for one candidate", () => {

@@ -1,5 +1,5 @@
-import { Direction, Pile } from "../../src/models/Pile"
-import { RuleSetBuilder } from "../../src/models/RuleSet"
+import { Direction, Pile } from "../../src/game/Pile"
+import { RuleSetBuilder } from "../../src/game/RuleSet"
 
 describe("pile", () => {
     let testCases = [

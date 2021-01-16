@@ -1,4 +1,4 @@
-import { Deck } from "../../src/models/Deck"
+import { Deck } from "../../src/game/Deck"
 
 describe("deck", () => {
     it("draws one card", () => {

@@ -1,17 +1,18 @@
+import { Deck } from "./game/Deck"
+import { Hand } from "./game/Hand"
+import { Pile } from "./game/Pile"
+import { RuleSet } from "./game/RuleSet"
+
 import { ClientMode } from "./models/ClientMode"
-import { Deck } from "./models/Deck"
 import { GameData } from "./models/GameData"
-import { Hand } from "./models/Hand"
 import { IGameData } from "./models/IGameData"
 import { Message } from "./models/Message"
-import { Pile } from "./models/Pile"
 import { RoomData } from "./models/RoomData"
 import { RoomWith } from "./models/RoomWith"
-import { RuleSet } from "./models/RuleSet"
 
-import { IVoteCalculator } from "./models/voting/IVoteCalculator"
-import { UnanimousVoteCalculator } from "./models/voting/UnanimousVoteCalculator"
-import { Vote } from "./models/voting/Vote"
+import { IVoteCalculator } from "./voting/IVoteCalculator"
+import { UnanimousVoteCalculator } from "./voting/UnanimousVoteCalculator"
+import { Vote } from "./voting/Vote"
 
 export {
     ClientMode,

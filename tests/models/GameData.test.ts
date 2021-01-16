@@ -1,6 +1,12 @@
-import { GameMode } from "../../src/models/RuleSet"
+import { GameMode } from "../../src/game/RuleSet"
 
-import { createDeck, createGameData, createHand, createPile, createRuleSet } from "../TestHelpers"
+import {
+    createDeck,
+    createGameData,
+    createHand,
+    createPile,
+    createRuleSet
+} from "../TestHelpers"
 
 describe("game data", () => {
     it("is won when the deck and the players' hands are empty", () => {

@@ -1,4 +1,4 @@
-import { Hand } from "../../src/models/Hand"
+import { Hand } from "../../src/game/Hand"
 
 describe("hand", () => {
     it("can receive a card", () => {

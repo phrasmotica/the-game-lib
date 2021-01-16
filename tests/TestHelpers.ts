@@ -1,10 +1,12 @@
-import { Deck } from "../src/models/Deck"
-import { Hand } from "../src/models/Hand"
+import { Deck } from "../src/game/Deck"
+import { Hand } from "../src/game/Hand"
+import { Direction, Pile } from "../src/game/Pile"
+import { GameMode, RuleSet, RuleSetBuilder } from "../src/game/RuleSet"
+
 import { GameData, PlayerHandMap } from "../src/models/GameData"
-import { Direction, Pile } from "../src/models/Pile"
 import { RoomData } from "../src/models/RoomData"
-import { GameMode, RuleSet, RuleSetBuilder } from "../src/models/RuleSet"
-import { Vote, VoteCalculationMethod, VoteMap } from "../src/models/voting/Vote"
+
+import { Vote, VoteCalculationMethod, VoteMap } from "../src/voting/Vote"
 
 export const createRoomData = (
     args: {

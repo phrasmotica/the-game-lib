@@ -1,4 +1,4 @@
-import { createVote } from "../../TestHelpers"
+import { createVote } from "../TestHelpers"
 
 describe("vote", () => {
     it("is complete when all voters have voted", () => {

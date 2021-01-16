@@ -1,10 +1,11 @@
-import { Deck } from "./Deck"
-import { Hand } from "./Hand"
 import { IGameData } from "./IGameData"
-import { Direction, Pile } from "./Pile"
-import { RuleSet } from "./RuleSet"
 
-import { Vote } from "./voting/Vote"
+import { Deck } from "../game/Deck"
+import { Hand } from "../game/Hand"
+import { Direction, Pile } from "../game/Pile"
+import { RuleSet } from "../game/RuleSet"
+
+import { Vote } from "../voting/Vote"
 
 /**
  * Represents a map of player names to hands.
