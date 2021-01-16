@@ -3,7 +3,6 @@ import { Hand } from "./game/Hand"
 import { Pile } from "./game/Pile"
 import { RuleSet } from "./game/RuleSet"
 
-import { ClientMode } from "./models/ClientMode"
 import { GameData } from "./models/GameData"
 import { IGameData } from "./models/IGameData"
 import { Message } from "./models/Message"
@@ -15,7 +14,6 @@ import { UnanimousVoteCalculator } from "./voting/UnanimousVoteCalculator"
 import { Vote } from "./voting/Vote"
 
 export {
-    ClientMode,
     Deck,
     GameData,
     Hand,
