@@ -26,7 +26,7 @@ export enum VoteCalculationMethod {
 }
 
 /**
- * Stores a map of voters to votees.
+ * Stores a map of voters to candidates.
  */
 export class Vote {
     /**
@@ -47,12 +47,12 @@ export class Vote {
     }
 
     /**
-     * Adds a vote from the given voter for the given votee.
+     * Adds a vote from the given voter for the given candidate.
      */
-    addVote(voter: string, votee: string) {
+    addVote(voter: string, candidate: string) {
         if (!this.isClosed) {
             if (this.voters.includes(voter)) {
-                this.voteMap[voter] = votee
+                this.voteMap[voter] = candidate
                 return VoteResult.Success
             }
 

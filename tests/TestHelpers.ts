@@ -45,7 +45,7 @@ export const createGameData = (
         args.hands ?? createHands(),
         args.piles ?? createPiles({}),
         args.hasStarted ?? false,
-        args.vote ?? createVote(),
+        args.vote ?? createVote({}),
         args.startingPlayer,
         args.turnsPlayed ?? 0,
         args.currentPlayerIndex ?? 0,
@@ -118,15 +118,18 @@ export const createPile = (
     )
 }
 
-export const createVote = (voters?: string[]) => {
-    voters ??= ["player1"]
-    let voteMap = createVoteMap(voters)
-
+export const createVote = (
+    args: {
+        voters?: string[],
+        voteMap?: VoteMap,
+        voteCalculationMethod?: VoteCalculationMethod,
+    }
+) => {
     return new Vote(
-        voters,
-        voteMap,
-        VoteCalculationMethod.Unanimous,
-        false
+        args.voters ?? ["voter1"],
+        args.voteMap ?? createVoteMap(args.voters ?? ["voter1"]),
+        args.voteCalculationMethod ?? VoteCalculationMethod.Unanimous,
+        false,
     )
 }
 
