@@ -21,9 +21,6 @@ export class RoomData {
         if (!this.playerIsPresent(player)) {
             this.players.push(player)
         }
-        else {
-            console.warn(`Tried to add player ${player} to room ${this.name} but they were already in the room!`)
-        }
 
         return true
     }
@@ -37,9 +34,6 @@ export class RoomData {
 
             let index = this.players.indexOf(player)
             this.players.splice(index, 1)
-        }
-        else {
-            console.warn(`Tried to remove player ${player} from room ${this.name} but they were not in the room!`)
         }
 
         return true
@@ -59,9 +53,6 @@ export class RoomData {
         if (!this.spectatorIsPresent(player)) {
             this.spectators.push(player)
         }
-        else {
-            console.warn(`Tried to add player ${player} to room ${this.name} as a spectator but they were already in the room!`)
-        }
 
         return true
     }
@@ -73,9 +64,6 @@ export class RoomData {
         if (this.spectatorIsPresent(player)) {
             let index = this.spectators.indexOf(player)
             this.spectators.splice(index, 1)
-        }
-        else {
-            console.warn(`Tried to remove spectator ${player} from room ${this.name} but they were not in the room!`)
         }
 
         return true
@@ -92,7 +80,6 @@ export class RoomData {
      * Starts a game in this room with the given rule set.
      */
     startGame() {
-        console.log(`Starting game in room ${this.name} with ${this.players.length} player(s)`)
         this.gameData.start(this.players)
     }
 

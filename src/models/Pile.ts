@@ -66,7 +66,10 @@ export class Pile {
     push(number: number, ruleSet: RuleSet) {
         if (this.canBePlayed(number, ruleSet)) {
             this.cards.push(number)
+            return true
         }
+
+        return false
     }
 
     /**
@@ -129,11 +132,9 @@ export class Pile {
         if (ruleSet.isOnFire()) {
             if (ruleSet.cardIsOnFire(this.top())) {
                 this.turnsOnFire++
-                console.log(`Pile ${this.index} has been on fire for ${this.turnsOnFire} turns`)
             }
             else if (this.turnsOnFire > 0) {
                 this.turnsOnFire = 0
-                console.log(`Pile ${this.index} is no longer on fire`)
             }
         }
     }

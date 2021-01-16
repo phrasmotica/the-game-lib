@@ -2,13 +2,14 @@ import { Deck } from "./Deck"
 import { Hand } from "./Hand"
 import { IGameData } from "./IGameData"
 import { Direction, Pile } from "./Pile"
-import { Vote } from "./voting/Vote"
 import { RuleSet } from "./RuleSet"
+
+import { Vote } from "./voting/Vote"
 
 /**
  * Represents a map of player names to hands.
  */
-type PlayerHandMap = {
+export type PlayerHandMap = {
     [playerName: string] : Hand
 }
 
@@ -41,8 +42,6 @@ export class GameData implements IGameData {
         public currentPlayerIndex: number,
         public cardToPlay: number | undefined,
         public cardsPlayedThisTurn: number,
-        public isWon: boolean,
-        public isLost: boolean,
     ) { }
 
     /**
@@ -71,9 +70,7 @@ export class GameData implements IGameData {
             0,
             0,
             undefined,
-            0,
-            false,
-            false
+            0
         )
     }
 
@@ -94,8 +91,6 @@ export class GameData implements IGameData {
             gameData.currentPlayerIndex,
             gameData.cardToPlay,
             gameData.cardsPlayedThisTurn,
-            gameData.isWon,
-            gameData.isLost,
         )
     }
 
@@ -205,8 +200,6 @@ export class GameData implements IGameData {
         this.startingPlayer = undefined
         this.startingPlayerVote = Vote.empty()
         this.turnsPlayed = 0
-        this.isLost = false
-        this.isWon = false
         this.hasStarted = false
         this.cardToPlay = undefined
         this.cardsPlayedThisTurn = 0
@@ -253,7 +246,7 @@ export class GameData implements IGameData {
      */
     getHand(playerName: string) {
         let handObj = this.hands[playerName]
-        return handObj !== undefined ? Hand.from(handObj) : undefined
+        return Hand.from(handObj)
     }
 
     /**
@@ -275,10 +268,7 @@ export class GameData implements IGameData {
      */
     sortHand(playerName: string) {
         let hand = this.getHand(playerName)
-
-        if (hand !== undefined) {
-            this.hands[playerName] = hand.sort()
-        }
+        this.hands[playerName] = hand.sort()
     }
 
     /**
@@ -289,7 +279,7 @@ export class GameData implements IGameData {
         pile.push(card, this.ruleSet)
 
         let hand = this.getHand(player)
-        hand!.remove(card)
+        hand.remove(card)
 
         this.cardsPlayedThisTurn++
     }
@@ -308,11 +298,9 @@ export class GameData implements IGameData {
 
             // shuffle player's hand back into the deck
             let hand = this.getHand(playerName)
-            if (hand !== undefined) {
-                this.deck.addCards(hand.cards)
-                this.deck.shuffle()
-                delete this.hands[playerName]
-            }
+            this.deck.addCards(hand.cards)
+            this.deck.shuffle()
+            delete this.hands[playerName]
 
             return true
         }
@@ -328,64 +316,35 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Checks for the game being won.
+     * Returns whether the game is won.
      */
-    checkForWin() {
-        let handsEmpty = true
-        for (let hand of this.enumerateHands()) {
-            if (!hand.isEmpty()) {
-                handsEmpty = false
-                break
-            }
-        }
-
-        if (this.deck.isEmpty() && handsEmpty) {
-            this.isWon = true
-
-            // TODO: the client isn't rendering this properly...
-            // - maybe it's rendering this and then rendering the "Your hand is empty/It's player x's turn." message immediately afterwards?
-            return true
-        }
-
-        return false
+    isWon() {
+        let handsEmpty = this.enumerateHands().every(h => h.isEmpty())
+        return this.deck.isEmpty() && handsEmpty
     }
 
     /**
-     * Checks for the game being lost.
+     * Returns whether the game is lost.
      */
-    checkForLoss() {
-        for (let pile of this.piles) {
-            pile.endTurn(this.ruleSet)
-
-            if (pile.isDestroyed(this.ruleSet)) {
-                console.log(`Pile ${pile.index} is destroyed!`)
-                this.isLost = true
-                return
-            }
-        }
-
-        let noCardsCanBePlayed = true
-        for (let hand of this.enumerateHands()) {
-            if (hand === undefined || hand.isEmpty()) {
-                continue
-            }
-
-            for (let card of hand.cards) {
-                for (let pile of this.piles) {
-                    if (pile.canBePlayed(card, this.ruleSet)) {
-                        noCardsCanBePlayed = false
-                        break
-                    }
-                }
-            }
-        }
-
-        if (!this.deck.isEmpty() && noCardsCanBePlayed) {
-            this.isLost = true
+    isLost() {
+        if (this.piles.some(p => p.isDestroyed(this.ruleSet))) {
             return true
         }
 
-        return false
+        let nonEmptyHands = this.enumerateHands().filter(h => !h.isEmpty())
+        if (nonEmptyHands.length <= 0) {
+            return !this.deck.isEmpty()
+        }
+
+        let cardCanBePlayed = nonEmptyHands.some(
+            h => h.cards.some(
+                c => this.piles.some(
+                    p => p.canBePlayed(c, this.ruleSet)
+                )
+            )
+        )
+
+        return !cardCanBePlayed
     }
 
     /**
@@ -397,15 +356,21 @@ export class GameData implements IGameData {
         if (currentPlayer !== undefined) {
             let hand = this.getHand(currentPlayer)
 
-            if (hand !== undefined) {
-                for (let i = 0; i < this.cardsPlayedThisTurn; i++) {
-                    if (!this.deck.isEmpty()) {
-                        let newCard = this.deck.drawOne()
-                        hand.add(newCard)
-                    }
+            for (let i = 0; i < this.cardsPlayedThisTurn; i++) {
+                if (!this.deck.isEmpty()) {
+                    let newCard = this.deck.drawOne()
+                    hand.add(newCard)
                 }
             }
         }
+    }
+
+    /**
+     * Ends the current turn.
+     */
+    endTurn() {
+        this.piles.forEach(p => p.endTurn(this.ruleSet))
+        this.cardsPlayedThisTurn = 0
     }
 
     /**
@@ -415,10 +380,6 @@ export class GameData implements IGameData {
         let players = this.players
         let newIndex = (this.currentPlayerIndex + 1) % players.length
         this.currentPlayerIndex = newIndex
-
-        this.cardsPlayedThisTurn = 0
-        let nextPlayer = players[newIndex]
-
-        return nextPlayer
+        return players[newIndex]
     }
 }
