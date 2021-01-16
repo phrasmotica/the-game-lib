@@ -1,0 +1,137 @@
+import { Deck } from "../src/models/Deck"
+import { Hand } from "../src/models/Hand"
+import { GameData, PlayerHandMap } from "../src/models/GameData"
+import { Direction, Pile } from "../src/models/Pile"
+import { RoomData } from "../src/models/RoomData"
+import { GameMode, RuleSet, RuleSetBuilder } from "../src/models/RuleSet"
+import { Vote, VoteCalculationMethod, VoteMap } from "../src/models/voting/Vote"
+
+export const createRoomData = (
+    args: {
+        name?: string,
+        players?: string[],
+        spectators?: string[],
+        gameData?: GameData
+    }
+) => {
+    return new RoomData(
+        args.name ?? "roomName",
+        args.players ?? createPlayers(),
+        args.spectators ?? createSpectators(),
+        args.gameData ?? createGameData({}),
+    )
+}
+
+export const createGameData = (
+    args: {
+        players?: string[],
+        ruleSet?: RuleSet,
+        deck?: Deck,
+        hands?: PlayerHandMap,
+        piles?: Pile[],
+        hasStarted?: boolean,
+        vote?: Vote,
+        startingPlayer?: string,
+        turnsPlayed?: number,
+        currentPlayerIndex?: number,
+        cardToPlay?: number,
+        cardsPlayedThisTurn?: number,
+    }
+) => {
+    return new GameData(
+        args.players ?? createPlayers(),
+        args.ruleSet ?? createRuleSet({}),
+        args.deck ?? createDeck(),
+        args.hands ?? createHands(),
+        args.piles ?? createPiles({}),
+        args.hasStarted ?? false,
+        args.vote ?? createVote(),
+        args.startingPlayer,
+        args.turnsPlayed ?? 0,
+        args.currentPlayerIndex ?? 0,
+        args.cardToPlay,
+        args.cardsPlayedThisTurn ?? 0,
+    )
+}
+
+const createPlayers = () => {
+    return ["player1"]
+}
+
+const createSpectators = () => {
+    return ["spectator1"]
+}
+
+export const createRuleSet = (
+    args: {
+        jumpBackSize?: number,
+        gameMode?: GameMode,
+    }
+) => {
+    return new RuleSetBuilder()
+            .withJumpBackSize(args.jumpBackSize ?? 10)
+            .withGameMode(args.gameMode ?? GameMode.Regular)
+            .build()
+}
+
+export const createDeck = (cards?: number[]) => {
+    return new Deck(cards ?? [2, 3, 4])
+}
+
+export const createHands = (players?: string[], cards?: number[]) => {
+    let hands: PlayerHandMap = {}
+
+    players ??= ["player1"]
+    players.forEach(p => hands[p] = createHand(cards))
+
+    return hands
+}
+
+export const createHand = (cards?: number[]) => {
+    return new Hand(cards ?? [41, 42, 43])
+}
+
+export const createPiles = (
+    args: {
+        start?: number,
+        direction?: Direction,
+        cards?: number[],
+    }
+) => {
+    return [createPile(args)]
+}
+
+export const createPile = (
+    args: {
+        start?: number,
+        direction?: Direction,
+        cards?: number[],
+        turnsOnFire?: number,
+    }
+) => {
+    return new Pile(
+        0,
+        args.start ?? 1,
+        args.direction ?? Direction.Ascending,
+        args.cards ?? [20, 30, 40],
+        args.turnsOnFire
+    )
+}
+
+export const createVote = (voters?: string[]) => {
+    voters ??= ["player1"]
+    let voteMap = createVoteMap(voters)
+
+    return new Vote(
+        voters,
+        voteMap,
+        VoteCalculationMethod.Unanimous,
+        false
+    )
+}
+
+export const createVoteMap = (voters: string[]) => {
+    let voteMap: VoteMap = {}
+    voters.forEach(p => voteMap[p] = p)
+    return voteMap
+}

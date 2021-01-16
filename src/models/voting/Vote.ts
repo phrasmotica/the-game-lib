@@ -4,7 +4,7 @@ import { UnanimousVoteCalculator } from "./UnanimousVoteCalculator"
 /**
  * Represents a map of votes.
  */
-type VoteMap = {
+export type VoteMap = {
     [voter: string] : string
 }
 
@@ -32,7 +32,7 @@ export class Vote {
     /**
      * Creates a new player vote.
      */
-    private constructor(
+    constructor(
         private voters: string[],
         private voteMap: VoteMap,
         private voteCalculationMethod: VoteCalculationMethod,
