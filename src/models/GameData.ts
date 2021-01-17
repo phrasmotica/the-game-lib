@@ -247,7 +247,7 @@ export class GameData implements IGameData {
      */
     getHand(playerName: string) {
         let handObj = this.hands[playerName]
-        return Hand.from(handObj)
+        return handObj !== undefined ? Hand.from(handObj) : undefined
     }
 
     /**
@@ -269,7 +269,10 @@ export class GameData implements IGameData {
      */
     sortHand(playerName: string) {
         let hand = this.getHand(playerName)
-        this.hands[playerName] = hand.sort()
+
+        if (hand !== undefined) {
+            this.hands[playerName] = hand.sort()
+        }
     }
 
     /**
@@ -280,7 +283,7 @@ export class GameData implements IGameData {
         pile.push(card, this.ruleSet)
 
         let hand = this.getHand(player)
-        hand.remove(card)
+        hand!.remove(card)
 
         this.cardsPlayedThisTurn++
     }
@@ -299,9 +302,11 @@ export class GameData implements IGameData {
 
             // shuffle player's hand back into the deck
             let hand = this.getHand(playerName)
-            this.deck.addCards(hand.cards)
-            this.deck.shuffle()
-            delete this.hands[playerName]
+            if (hand !== undefined) {
+                this.deck.addCards(hand.cards)
+                this.deck.shuffle()
+                delete this.hands[playerName]
+            }
 
             return true
         }
@@ -356,11 +361,12 @@ export class GameData implements IGameData {
 
         if (currentPlayer !== undefined) {
             let hand = this.getHand(currentPlayer)
-
-            for (let i = 0; i < this.cardsPlayedThisTurn; i++) {
-                if (!this.deck.isEmpty()) {
-                    let newCard = this.deck.drawOne()
-                    hand.add(newCard)
+            if (hand !== undefined) {
+                for (let i = 0; i < this.cardsPlayedThisTurn; i++) {
+                    if (!this.deck.isEmpty()) {
+                        let newCard = this.deck.drawOne()
+                        hand.add(newCard)
+                    }
                 }
             }
         }
