@@ -348,7 +348,7 @@ export class GameData implements IGameData {
     /**
      * Replenishes the hand of the current player.
      */
-    replenish(sortHand: boolean) {
+    replenish() {
         let currentPlayer = this.getCurrentPlayer()
 
         if (currentPlayer !== undefined) {
@@ -359,10 +359,6 @@ export class GameData implements IGameData {
                         let newCard = this.deck.drawOne()
                         hand.add(newCard)
                     }
-                }
-
-                if (sortHand) {
-                    hand = hand.sort()
                 }
             }
         }
