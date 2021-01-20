@@ -1,9 +1,9 @@
-import { IGameData } from "./IGameData"
+import { IGameData } from "game-server-lib"
 
-import { Deck } from "../game/Deck"
-import { Hand } from "../game/Hand"
-import { Direction, Pile } from "../game/Pile"
-import { RuleSet } from "../game/RuleSet"
+import { Deck } from "./Deck"
+import { Hand } from "./Hand"
+import { Direction, Pile } from "./Pile"
+import { RuleSet } from "./RuleSet"
 
 import { Vote } from "../voting/Vote"
 
@@ -24,7 +24,7 @@ export enum GameStartResult {
 }
 
 /**
- * Represents data about a game.
+ * Represents data about a game of The Game.
  */
 export class GameData implements IGameData {
     /**
