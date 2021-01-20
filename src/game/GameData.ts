@@ -1,9 +1,9 @@
-import { IGameData } from "./IGameData"
+import { IGameData } from "game-server-lib"
 
-import { Deck } from "../game/Deck"
-import { Hand } from "../game/Hand"
-import { Direction, Pile } from "../game/Pile"
-import { RuleSet } from "../game/RuleSet"
+import { Deck } from "./Deck"
+import { Hand } from "./Hand"
+import { Direction, Pile } from "./Pile"
+import { RuleSet } from "./RuleSet"
 
 import { Vote } from "../voting/Vote"
 
@@ -24,7 +24,7 @@ export enum GameStartResult {
 }
 
 /**
- * Represents data about a game.
+ * Represents data about a game of The Game.
  */
 export class GameData implements IGameData {
     /**
@@ -160,6 +160,13 @@ export class GameData implements IGameData {
     }
 
     /**
+     * Creates a hand for the rule set from the given deck.
+     */
+    dealHand(playerName: string) {
+        this.hands[playerName] = new Hand(this.deck.draw(this.ruleSet.handSize))
+    }
+
+    /**
      * Adds a starting player vote for the given player.
      */
     addStartingPlayerVote(playerName: string, startingPlayerName: string) {
@@ -195,19 +202,10 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Clears data from a lingering game.
+     * Returns whether the starting player has been chosen.
      */
-    clear() {
-        this.startingPlayer = undefined
-        this.startingPlayerVote = Vote.empty()
-        this.turnsPlayed = 0
-        this.hasStarted = false
-        this.cardToPlay = undefined
-        this.cardsPlayedThisTurn = 0
-        this.currentPlayerIndex = 0
-        this.players = []
-
-        return true
+    startingPlayerChosen() {
+        return this.startingPlayer !== undefined
     }
 
     /**
@@ -218,17 +216,41 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Returns whether the starting player has been chosen.
+     * Sorts the given player's hand.
      */
-    startingPlayerChosen() {
-        return this.startingPlayer !== undefined
+    sortHand(playerName: string) {
+        let hand = this.getHand(playerName)
+
+        if (hand !== undefined) {
+            this.hands[playerName] = hand.sort()
+        }
     }
 
     /**
-     * Creates a hand for the rule set from the given deck.
+     * Sets the card to play.
      */
-    dealHand(playerName: string) {
-        this.hands[playerName] = new Hand(this.deck.draw(this.ruleSet.handSize))
+    setCardToPlay(cardToPlay: number | undefined) {
+        this.cardToPlay = cardToPlay
+    }
+
+    /**
+     * Plays the given card on the given pile from the given player's hand.
+     */
+    playCard(player: string, card: number, pileIndex: number) {
+        let pile = this.piles[pileIndex]
+        pile.push(card, this.ruleSet)
+
+        let hand = this.getHand(player)
+        hand!.remove(card)
+
+        this.cardsPlayedThisTurn++
+    }
+
+    /**
+     * Returns whether the given player is in this game.
+     */
+    playerIsPresent(playerName: string) {
+        return this.players.includes(playerName)
     }
 
     /**
@@ -258,37 +280,6 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Sets the card to play.
-     */
-    setCardToPlay(cardToPlay: number | undefined) {
-        this.cardToPlay = cardToPlay
-    }
-
-    /**
-     * Sorts the given player's hand.
-     */
-    sortHand(playerName: string) {
-        let hand = this.getHand(playerName)
-
-        if (hand !== undefined) {
-            this.hands[playerName] = hand.sort()
-        }
-    }
-
-    /**
-     * Plays the given card on the given pile from the given player's hand.
-     */
-    playCard(player: string, card: number, pileIndex: number) {
-        let pile = this.piles[pileIndex]
-        pile.push(card, this.ruleSet)
-
-        let hand = this.getHand(player)
-        hand!.remove(card)
-
-        this.cardsPlayedThisTurn++
-    }
-
-    /**
      * Removes the given player from the game.
      */
     removePlayer(playerName: string) {
@@ -312,13 +303,6 @@ export class GameData implements IGameData {
         }
 
         return false
-    }
-
-    /**
-     * Returns whether the given player is in this game.
-     */
-    playerIsPresent(playerName: string) {
-        return this.players.includes(playerName)
     }
 
     /**
@@ -354,6 +338,14 @@ export class GameData implements IGameData {
     }
 
     /**
+     * Ends the current turn.
+     */
+    endTurn() {
+        this.piles.forEach(p => p.endTurn(this.ruleSet))
+        this.cardsPlayedThisTurn = 0
+    }
+
+    /**
      * Replenishes the hand of the current player.
      */
     replenish() {
@@ -373,14 +365,6 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Ends the current turn.
-     */
-    endTurn() {
-        this.piles.forEach(p => p.endTurn(this.ruleSet))
-        this.cardsPlayedThisTurn = 0
-    }
-
-    /**
      * Passes control to the next player.
      */
     nextPlayer() {
@@ -388,5 +372,21 @@ export class GameData implements IGameData {
         let newIndex = (this.currentPlayerIndex + 1) % players.length
         this.currentPlayerIndex = newIndex
         return players[newIndex]
+    }
+
+    /**
+     * Clears data from a lingering game.
+     */
+    clear() {
+        this.startingPlayer = undefined
+        this.startingPlayerVote = Vote.empty()
+        this.turnsPlayed = 0
+        this.hasStarted = false
+        this.cardToPlay = undefined
+        this.cardsPlayedThisTurn = 0
+        this.currentPlayerIndex = 0
+        this.players = []
+
+        return true
     }
 }

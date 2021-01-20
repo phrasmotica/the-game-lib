@@ -3,26 +3,9 @@ import { Hand } from "../src/game/Hand"
 import { Direction, Pile } from "../src/game/Pile"
 import { GameMode, RuleSet, RuleSetBuilder } from "../src/game/RuleSet"
 
-import { GameData, PlayerHandMap } from "../src/models/GameData"
-import { RoomData } from "../src/models/RoomData"
+import { GameData, PlayerHandMap } from "../src/game/GameData"
 
 import { Vote, VoteCalculationMethod, VoteMap } from "../src/voting/Vote"
-
-export const createRoomData = (
-    args: {
-        name?: string,
-        players?: string[],
-        spectators?: string[],
-        gameData?: GameData
-    }
-) => {
-    return new RoomData(
-        args.name ?? "roomName",
-        args.players ?? createPlayers(),
-        args.spectators ?? createSpectators(),
-        args.gameData ?? createGameData({}),
-    )
-}
 
 export const createGameData = (
     args: {
