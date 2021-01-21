@@ -9,48 +9,7 @@ export enum GameMode {
 /**
  * Interface for types containing a set of rules.
  */
-export interface IRuleSet {
-    /**
-     * The number of pairs of piles.
-     */
-    pairsOfPiles: number
-
-    /**
-     * The size of valid backward jumps on a pile.
-     */
-    jumpBackSize: number
-
-    /**
-     * The start value for descending piles.
-     */
-    topLimit: number
-
-    /**
-     * The size of a player's hand.
-     */
-    handSize: number
-
-    /**
-     * The number of cards that must be played per turn.
-     */
-    cardsPerTurn: number
-
-    /**
-     * The number of cards that must be played per turn during the endgame.
-     * Useless for single player but will have a use in multiplayer!
-     */
-    cardsPerTurnInEndgame: number
-
-    /**
-     * The game mode.
-     */
-    gameMode: GameMode
-
-    /**
-     * The cards that are on fire.
-     */
-    onFireCards: number[]
-}
+export interface IRuleSet {}
 
 /**
  * Represents a set of rules for the game.
@@ -98,6 +57,16 @@ export class RuleSet implements IRuleSet {
     onFireCards: number[]
 
     /**
+     * Whether the players can view pile history.
+     */
+    canViewPileHistory: boolean
+
+    /**
+     * The number of allowed mulligans.
+     */
+    mulliganLimit: number
+
+    /**
      * Creates a new rule set.
      */
     constructor() {
@@ -109,6 +78,8 @@ export class RuleSet implements IRuleSet {
         this.cardsPerTurnInEndgame = 1
         this.gameMode = GameMode.Regular
         this.onFireCards = [22, 33, 44, 55, 66, 77]
+        this.canViewPileHistory = false
+        this.mulliganLimit = 0
     }
 
     /**
@@ -123,6 +94,8 @@ export class RuleSet implements IRuleSet {
             .withCardsPerTurn(2)
             .withCardsPerTurnInEndgame(1)
             .withGameMode(GameMode.Regular)
+            .withCanViewPileHistory(false)
+            .withMulliganLimit(0)
             .build()
     }
 
@@ -138,6 +111,8 @@ export class RuleSet implements IRuleSet {
             .withCardsPerTurn(ruleSet.cardsPerTurn)
             .withCardsPerTurnInEndgame(ruleSet.cardsPerTurnInEndgame)
             .withGameMode(ruleSet.gameMode)
+            .withCanViewPileHistory(ruleSet.canViewPileHistory)
+            .withMulliganLimit(ruleSet.mulliganLimit)
             .build()
     }
 
@@ -225,6 +200,22 @@ export class RuleSetBuilder {
      */
     withGameMode(gameMode: GameMode) {
         this.ruleSet.gameMode = gameMode
+        return this
+    }
+
+    /**
+     * Sets whether the players can view pile history.
+     */
+    withCanViewPileHistory(canViewPileHistory: boolean) {
+        this.ruleSet.canViewPileHistory = canViewPileHistory
+        return this
+    }
+
+    /**
+     * Sets the mulligan limit.
+     */
+    withMulliganLimit(mulliganLimit: number) {
+        this.ruleSet.mulliganLimit = mulliganLimit
         return this
     }
 
