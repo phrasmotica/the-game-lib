@@ -84,4 +84,11 @@ export class Stack<T> {
 
         return this.stack[this.size - 1]
     }
+
+    /**
+     * Returns the entire stack.
+     */
+    reveal() {
+        return this.stack
+    }
 }

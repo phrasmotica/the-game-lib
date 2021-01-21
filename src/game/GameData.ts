@@ -247,6 +247,26 @@ export class GameData implements IGameData {
     }
 
     /**
+     * Returns the history of the given pile.
+     */
+    getPileHistory(pile: Pile) {
+        return pile.cards.reveal()
+    }
+
+    /**
+     * Removes the top card from the given pile and returns it to the hand of
+     * the given player.
+     */
+    returnToHand(pile: Pile, playerName: string) {
+        let top = pile.pop()
+
+        let hand = this.getHand(playerName)
+        if (hand !== undefined) {
+            hand.add(top)
+        }
+    }
+
+    /**
      * Returns whether the given player is in this game.
      */
     playerIsPresent(playerName: string) {

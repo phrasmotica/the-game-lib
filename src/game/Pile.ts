@@ -26,7 +26,7 @@ export class Pile {
     /**
      * The cards in the pile.
      */
-    private cards: Stack<number>
+    cards: Stack<number>
 
     /**
      * The number of turns that this pile has been on fire for.
@@ -70,6 +70,17 @@ export class Pile {
         }
 
         return false
+    }
+
+    /**
+     * Removes the card on the top of the pile and returns it.
+     */
+    pop() {
+        if (this.cards.isEmpty()) {
+            throw new Error("The pile is empty!")
+        }
+
+        return this.cards.pop()
     }
 
     /**
