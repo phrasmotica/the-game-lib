@@ -338,14 +338,6 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Ends the current turn.
-     */
-    endTurn() {
-        this.piles.forEach(p => p.endTurn(this.ruleSet))
-        this.cardsPlayedThisTurn = 0
-    }
-
-    /**
      * Replenishes the hand of the current player.
      */
     replenish() {
@@ -362,6 +354,14 @@ export class GameData implements IGameData {
                 }
             }
         }
+    }
+
+    /**
+     * Ends the current turn.
+     */
+    endTurn() {
+        this.piles.forEach(p => p.endTurn(this.ruleSet))
+        this.cardsPlayedThisTurn = 0
     }
 
     /**
