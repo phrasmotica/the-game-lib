@@ -1,3 +1,4 @@
+import { Card } from "./Card"
 import { Random } from "../util/Random"
 
 /**
@@ -8,7 +9,7 @@ export class Deck {
      * Creates a new deck.
      */
     constructor(
-        private cards: number[]
+        private cards: Card[]
     ) { }
 
     /**
@@ -18,7 +19,7 @@ export class Deck {
         let cards = []
 
         for (let i = min; i < max; i++) {
-            cards.push(i)
+            cards.push(new Card(i))
         }
 
         return new Deck(cards)
@@ -71,7 +72,7 @@ export class Deck {
     /**
      * Adds the given cards to the deck.
      */
-    addCards(cards: number[]) {
+    addCards(cards: Card[]) {
         this.cards.push(...cards)
     }
 

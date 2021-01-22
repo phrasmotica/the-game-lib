@@ -1,3 +1,5 @@
+import { Card } from "./Card"
+
 /**
  * Represents a player's hand.
  */
@@ -6,7 +8,7 @@ export class Hand {
      * Creates a new hand.
      */
     constructor(
-        public cards: number[]
+        public cards: Card[]
     ) { }
 
     /**
@@ -33,14 +35,14 @@ export class Hand {
     /**
      * Adds a new random card to the hand.
      */
-    add(card: number) {
+    add(card: Card) {
         this.cards.push(card)
     }
 
     /**
      * Removes the card at the given index from the hand.
      */
-    remove(card: number) {
+    remove(card: Card) {
         let index = this.cards.indexOf(card)
         this.cards.splice(index, 1)
     }
@@ -49,6 +51,6 @@ export class Hand {
      * Returns a new hand containing this hand's cards sorted into ascending order.
      */
     sort() {
-        return new Hand(this.cards.sort((a, b) => a - b))
+        return new Hand(this.cards.sort((a, b) => a.value - b.value))
     }
 }

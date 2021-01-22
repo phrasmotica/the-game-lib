@@ -1,3 +1,4 @@
+import { Card } from "../src/game/Card"
 import { Deck } from "../src/game/Deck"
 import { Hand } from "../src/game/Hand"
 import { Direction, Pile } from "../src/game/Pile"
@@ -59,11 +60,11 @@ export const createRuleSet = (
             .build()
 }
 
-export const createDeck = (cards?: number[]) => {
-    return new Deck(cards ?? [2, 3, 4])
+export const createDeck = (cards?: Card[]) => {
+    return new Deck(cards ?? createCards([2, 3, 4]))
 }
 
-export const createHands = (players?: string[], cards?: number[]) => {
+export const createHands = (players?: string[], cards?: Card[]) => {
     let hands: PlayerHandMap = {}
 
     players ??= ["player1"]
@@ -72,15 +73,15 @@ export const createHands = (players?: string[], cards?: number[]) => {
     return hands
 }
 
-export const createHand = (cards?: number[]) => {
-    return new Hand(cards ?? [41, 42, 43])
+export const createHand = (cards?: Card[]) => {
+    return new Hand(cards ?? createCards([41, 42, 43]))
 }
 
 export const createPiles = (
     args: {
         start?: number,
         direction?: Direction,
-        cards?: number[],
+        cards?: Card[],
     }
 ) => {
     return [createPile(args)]
@@ -90,16 +91,20 @@ export const createPile = (
     args: {
         start?: number,
         direction?: Direction,
-        cards?: number[],
+        cards?: Card[],
         turnsOnFire?: number,
     }
 ) => {
     return new Pile(
         args.start ?? 1,
         args.direction ?? Direction.Ascending,
-        args.cards ?? [20, 30, 40],
+        args.cards ?? createCards([20, 30, 40]),
         args.turnsOnFire
     )
+}
+
+export const createCards = (values: number[]) => {
+    return values.map(v => new Card(v))
 }
 
 export const createVote = (

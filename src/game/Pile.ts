@@ -1,3 +1,4 @@
+import { Card } from "./Card"
 import { RuleSet } from "./RuleSet"
 
 import { Stack } from "../util/Stack"
@@ -26,7 +27,7 @@ export class Pile {
     /**
      * The cards in the pile.
      */
-    cards: Stack<number>
+    cards: Stack<Card>
 
     /**
      * The number of turns that this pile has been on fire for.
@@ -39,7 +40,7 @@ export class Pile {
     constructor(
         public start: number,
         public direction: Direction,
-        cards?: number[],
+        cards?: Card[],
         turnsOnFire?: number,
     ) {
         this.cards = new Stack(100, cards)
@@ -59,11 +60,11 @@ export class Pile {
     }
 
     /**
-     * Adds a number to the pile if possible.
+     * Adds a card from the given owner to the pile, if possible.
      */
-    push(number: number, ruleSet: RuleSet) {
-        if (this.canBePlayed(number, ruleSet)) {
-            this.cards.push(number)
+    push(card: Card, ruleSet: RuleSet) {
+        if (this.canBePlayed(card, ruleSet)) {
+            this.cards.push(card)
             return true
         }
 
@@ -86,7 +87,7 @@ export class Pile {
      */
     top() {
         if (this.cards.isEmpty()) {
-            return this.start
+            return new Card(this.start)
         }
 
         return this.cards.peek()
@@ -95,14 +96,22 @@ export class Pile {
     /**
      * Returns whether the given number can be played on this pile.
      */
-    canBePlayed(number: number, ruleSet: RuleSet) {
-        let top = this.top()
+    canBePlayed(card: Card, ruleSet: RuleSet) {
+        let cardValue = card.value
+        let topValue = this.top().value
 
         if (this.direction === Direction.Ascending) {
-            return number > top || number === top - ruleSet.jumpBackSize
+            return cardValue > topValue || cardValue === topValue - ruleSet.jumpBackSize
         }
 
-        return number < top || number === top + ruleSet.jumpBackSize
+        return cardValue < topValue || cardValue === topValue + ruleSet.jumpBackSize
+    }
+
+    /**
+     * Returns whether the given player can mulligan from this pile.
+     */
+    canMulligan(player: string) {
+        return !this.cards.isEmpty() && this.top().owner === player
     }
 
     /**
@@ -124,7 +133,7 @@ export class Pile {
      * Returns whether this pile is on fire.
      */
     isOnFire(ruleSet: RuleSet) {
-        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.top())
+        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.top().value)
     }
 
     /**
@@ -139,7 +148,7 @@ export class Pile {
      */
     endTurn(ruleSet: RuleSet) {
         if (ruleSet.isOnFire()) {
-            if (ruleSet.cardIsOnFire(this.top())) {
+            if (ruleSet.cardIsOnFire(this.top().value)) {
                 this.turnsOnFire++
             }
             else if (this.turnsOnFire > 0) {

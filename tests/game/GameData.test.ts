@@ -1,11 +1,12 @@
+import { Card } from "../../src/game/Card"
 import { GameMode } from "../../src/game/RuleSet"
 
 import {
+    createCards,
     createDeck,
     createGameData,
     createHand,
     createPile,
-    createPiles,
     createRuleSet
 } from "../TestHelpers"
 
@@ -41,14 +42,14 @@ describe("game data", () => {
         })
     )
 
-    it("returns the top card of a pile to the player's hand when they mulligan", () => {
+    it("returns a mulliganed card to the player's hand", () => {
         // arrange
         let gameData = createGameData({
             piles: [createPile({
-                cards: [20, 30, 40]
+                cards: [new Card(30), new Card(40, "player1")]
             })],
             hands: {
-                "player1": createHand([41, 42, 43]),
+                "player1": createHand(createCards([41, 42, 43])),
             }
         })
 
@@ -56,9 +57,28 @@ describe("game data", () => {
         let result = gameData.mulligan(0, "player1")
 
         // assert
-        expect(result.card).toBe(40)
-        expect(result.previousCard).toBe(30)
-        expect(gameData.getHand("player1")!.cards).toStrictEqual([41, 42, 43, 40])
+        expect(result.success).toBe(true)
+        expect(result.card!.value).toBe(40)
+        expect(result.previousCard!.value).toBe(30)
+        expect(gameData.getHand("player1")!.cards).toHaveLength(4)
+    })
+
+    it("does nothing if a mulligan is prevented", () => {
+        // arrange
+        let gameData = createGameData({
+            piles: [createPile({
+                cards: [new Card(30), new Card(40, "player2")]
+            })],
+            hands: {
+                "player1": createHand(createCards([41, 42, 43])),
+            }
+        })
+
+        // act
+        let result = gameData.mulligan(0, "player1")
+
+        // assert
+        expect(result.success).toBe(false)
     })
 
     it("is won when the deck and the players' hands are empty", () => {
@@ -80,7 +100,7 @@ describe("game data", () => {
     it("is not won when the deck is not empty", () => {
         // arrange
         let gameData = createGameData({
-            deck: createDeck([4]),
+            deck: createDeck(createCards([4])),
         })
 
         // act
@@ -94,7 +114,7 @@ describe("game data", () => {
         // arrange
         let gameData = createGameData({
             hands: {
-                "player1": createHand([4])
+                "player1": createHand(createCards([4]))
             },
         })
 
@@ -113,11 +133,11 @@ describe("game data", () => {
             }),
             piles: [
                 createPile({
-                    cards: [20, 30, 40, 44],
+                    cards: createCards([20, 30, 40, 44]),
                     turnsOnFire: 2,
                 }),
                 createPile({
-                    cards: [35, 38],
+                    cards: createCards([35, 38]),
                     turnsOnFire: 0,
                 }),
             ],
@@ -133,12 +153,12 @@ describe("game data", () => {
     it("is lost when the deck is not empty and the players cannot play any cards", () => {
         // arrange
         let gameData = createGameData({
-            deck: createDeck([46, 47, 48]),
+            deck: createDeck(createCards([46, 47, 48])),
             hands: {
-                "player1": createHand([41, 42, 43])
+                "player1": createHand(createCards([41, 42, 43]))
             },
             piles: [createPile({
-                cards: [20, 30, 40, 50],
+                cards: createCards([20, 30, 40, 50]),
             })],
         })
 
@@ -152,12 +172,12 @@ describe("game data", () => {
     it("is not lost when the deck is not empty and the players can play a card", () => {
         // arrange
         let gameData = createGameData({
-            deck: createDeck([46, 47, 48]),
+            deck: createDeck(createCards([46, 47, 48])),
             hands: {
-                "player1": createHand([41, 42, 51])
+                "player1": createHand(createCards([41, 42, 51]))
             },
             piles: [createPile({
-                cards: [20, 30, 40, 50],
+                cards: createCards([20, 30, 40, 50]),
             })],
         })
 
@@ -173,10 +193,10 @@ describe("game data", () => {
         let gameData = createGameData({
             deck: createDeck([]),
             hands: {
-                "player1": createHand([41, 42, 43])
+                "player1": createHand(createCards([41, 42, 43]))
             },
             piles: [createPile({
-                cards: [20, 30, 40, 50],
+                cards: createCards([20, 30, 40, 50]),
             })],
         })
 
@@ -192,10 +212,10 @@ describe("game data", () => {
         let gameData = createGameData({
             deck: createDeck([]),
             hands: {
-                "player1": createHand([41, 42, 51])
+                "player1": createHand(createCards([41, 42, 51]))
             },
             piles: [createPile({
-                cards: [20, 30, 40, 50],
+                cards: createCards([20, 30, 40, 50]),
             })],
         })
 

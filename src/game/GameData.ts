@@ -1,9 +1,12 @@
 import { IGameData } from "game-server-lib"
 
+import { Card } from "./Card"
 import { Deck } from "./Deck"
 import { Hand } from "./Hand"
 import { Direction, Pile } from "./Pile"
 import { RuleSet } from "./RuleSet"
+
+import { MulliganResult } from "./results/MulliganResult"
 
 import { Vote } from "../voting/Vote"
 
@@ -21,16 +24,6 @@ export enum GameStartResult {
     Success,
     NoStartingPlayer,
     NonExistent
-}
-
-/**
- * Represents the result of a mulligan.
- */
-export class MulliganResult {
-    constructor(
-        public card: number,
-        public previousCard: number,
-    ) { }
 }
 
 /**
@@ -175,7 +168,9 @@ export class GameData implements IGameData {
      * Creates a hand for the rule set from the given deck.
      */
     dealHand(playerName: string) {
-        this.hands[playerName] = new Hand(this.deck.draw(this.ruleSet.handSize))
+        let cards = this.deck.draw(this.ruleSet.handSize)
+        cards.forEach(c => c.owner = playerName)
+        this.hands[playerName] = new Hand(cards)
     }
 
     /**
@@ -248,7 +243,7 @@ export class GameData implements IGameData {
     /**
      * Plays the given card on the given pile from the given player's hand.
      */
-    playCard(player: string, card: number, pileIndex: number) {
+    playCard(player: string, card: Card, pileIndex: number) {
         let pile = this.piles[pileIndex]
         pile.push(card, this.ruleSet)
 
@@ -279,6 +274,10 @@ export class GameData implements IGameData {
      */
     mulligan(pileIndex: number, playerName: string) {
         let pile = this.piles[pileIndex]
+        if (!pile.canMulligan(playerName)) {
+            return new MulliganResult(false)
+        }
+
         let top = pile.pop()
 
         let hand = this.getHand(playerName)
@@ -287,7 +286,7 @@ export class GameData implements IGameData {
         }
 
         this.cardsMulliganed++
-        return new MulliganResult(top, pile.top())
+        return new MulliganResult(true, top, pile.top())
     }
 
     /**
