@@ -24,6 +24,16 @@ export enum GameStartResult {
 }
 
 /**
+ * Represents the result of a mulligan.
+ */
+export class MulliganResult {
+    constructor(
+        public card: number,
+        public previousCard: number,
+    ) { }
+}
+
+/**
  * Represents data about a game of The Game.
  */
 export class GameData implements IGameData {
@@ -260,7 +270,7 @@ export class GameData implements IGameData {
      * Removes the top card from the pile with the given index and returns it to
      * the hand of the given player.
      */
-    returnToHand(pileIndex: number, playerName: string) {
+    mulligan(pileIndex: number, playerName: string) {
         let pile = this.piles[pileIndex]
         let top = pile.pop()
 
@@ -270,6 +280,7 @@ export class GameData implements IGameData {
         }
 
         this.cardsMulliganed++
+        return new MulliganResult(top, pile.top())
     }
 
     /**
