@@ -43,6 +43,7 @@ export class GameData implements IGameData {
         public currentPlayerIndex: number,
         public cardToPlay: number | undefined,
         public cardsPlayedThisTurn: number,
+        public cardsMulliganed: number,
     ) { }
 
     /**
@@ -71,6 +72,7 @@ export class GameData implements IGameData {
             0,
             0,
             undefined,
+            0,
             0
         )
     }
@@ -92,6 +94,7 @@ export class GameData implements IGameData {
             gameData.currentPlayerIndex,
             gameData.cardToPlay,
             gameData.cardsPlayedThisTurn,
+            gameData.cardsMulliganed,
         )
     }
 
@@ -265,6 +268,8 @@ export class GameData implements IGameData {
         if (hand !== undefined) {
             hand.add(top)
         }
+
+        this.cardsMulliganed++
     }
 
     /**
@@ -405,6 +410,7 @@ export class GameData implements IGameData {
         this.hasStarted = false
         this.cardToPlay = undefined
         this.cardsPlayedThisTurn = 0
+        this.cardsMulliganed = 0
         this.currentPlayerIndex = 0
         this.players = []
 
