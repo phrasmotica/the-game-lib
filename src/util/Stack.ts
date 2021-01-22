@@ -20,14 +20,13 @@ export class Stack<T> {
     /**
      * Creates a new stack of the given capacity, optionally with some items already on it.
      */
-    constructor(maxSize: number, items?: T[]) {
-        this.size = 0
+    constructor(maxSize: number, size?: number, items?: T[]) {
         this.maxSize = maxSize
+        this.size = size ?? 0
         this.stack = []
 
         if (items && items.length > 0) {
             this.stack.push(...items)
-            this.size = this.stack.length
         }
     }
 
@@ -35,7 +34,7 @@ export class Stack<T> {
      * Returns a concrete stack object. Use when processing naive message from the server.
      */
     static from<T>(stack: Stack<T>) {
-        return new Stack(stack.maxSize, stack.stack)
+        return new Stack(stack.maxSize, stack.size, stack.stack)
     }
 
     /**

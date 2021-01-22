@@ -43,7 +43,7 @@ export class Pile {
         cards?: Card[],
         turnsOnFire?: number,
     ) {
-        this.cards = new Stack(100, cards)
+        this.cards = new Stack(100, cards?.length, cards)
         this.turnsOnFire = turnsOnFire || 0
     }
 

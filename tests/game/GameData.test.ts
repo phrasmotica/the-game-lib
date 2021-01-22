@@ -54,7 +54,9 @@ describe("game data", () => {
         })
 
         // act
+        console.log(gameData.piles[0].cards.stack)
         let result = gameData.mulligan(0, "player1")
+        console.log(gameData.piles[0].cards.stack)
 
         // assert
         expect(result.success).toBe(true)

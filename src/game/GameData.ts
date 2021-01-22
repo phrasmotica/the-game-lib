@@ -278,7 +278,9 @@ export class GameData implements IGameData {
             return new MulliganResult(false)
         }
 
+        console.log(pile.top())
         let top = pile.pop()
+        console.log(pile.top())
 
         let hand = this.getHand(playerName)
         if (hand !== undefined) {

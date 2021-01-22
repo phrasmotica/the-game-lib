@@ -76,6 +76,18 @@ describe("pile", () => {
             expect(canBePlayed).toBe(test.expected)
         })
 
+        it("behaves like a stack", () => {
+            // arrange
+            let pile = createPile({
+                cards: createCards([2, 3, 4]),
+            })
+
+            // act and assert
+            expect(pile.top().value).toBe(4)
+            expect(pile.pop().value).toBe(4)
+            expect(pile.top().value).toBe(3)
+        })
+
         it("allows player to mulligan if the pile is not empty and the top card is theirs", () => {
             // arrange
             let pile = createPile({
