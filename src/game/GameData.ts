@@ -267,6 +267,13 @@ export class GameData implements IGameData {
     }
 
     /**
+     * Returns whether a mulligan is allowed.
+     */
+    canMulligan() {
+        return this.cardsMulliganed < this.ruleSet.mulliganLimit
+    }
+
+    /**
      * Removes the top card from the pile with the given index and returns it to
      * the hand of the given player.
      */
