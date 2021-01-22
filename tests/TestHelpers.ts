@@ -1,10 +1,9 @@
 import { Card } from "../src/game/Card"
 import { Deck } from "../src/game/Deck"
+import { GameData, PlayerHandMap } from "../src/game/GameData"
 import { Hand } from "../src/game/Hand"
 import { Direction, Pile } from "../src/game/Pile"
 import { GameMode, RuleSet, RuleSetBuilder } from "../src/game/RuleSet"
-
-import { GameData, PlayerHandMap } from "../src/game/GameData"
 
 import { Vote, VoteCalculationMethod, VoteMap } from "../src/voting/Vote"
 

@@ -1,8 +1,6 @@
 import { Card } from "./Card"
 import { RuleSet } from "./RuleSet"
 
-import { Stack } from "../util/Stack"
-
 /**
  * Represents a direction that a pile can go in.
  */
@@ -27,7 +25,7 @@ export class Pile {
     /**
      * The cards in the pile.
      */
-    cards: Stack<Card>
+    cards: Card[]
 
     /**
      * The number of turns that this pile has been on fire for.
@@ -43,7 +41,7 @@ export class Pile {
         cards?: Card[],
         turnsOnFire?: number,
     ) {
-        this.cards = new Stack(100, cards?.length, cards)
+        this.cards = cards || []
         this.turnsOnFire = turnsOnFire || 0
     }
 
@@ -54,7 +52,7 @@ export class Pile {
         return new Pile(
             pile.start,
             pile.direction,
-            pile.cards.stack,
+            pile.cards.map(c => Card.from(c)),
             pile.turnsOnFire,
         )
     }
@@ -75,10 +73,6 @@ export class Pile {
      * Removes the card on the top of the pile and returns it.
      */
     pop() {
-        if (this.cards.isEmpty()) {
-            throw new Error("The pile is empty!")
-        }
-
         return this.cards.pop()
     }
 
@@ -86,11 +80,11 @@ export class Pile {
      * Returns the card on the top of the pile.
      */
     top() {
-        if (this.cards.isEmpty()) {
+        if (this.cards.length <= 0) {
             return new Card(this.start)
         }
 
-        return this.cards.peek()
+        return this.cards[this.cards.length - 1]
     }
 
     /**
@@ -111,7 +105,7 @@ export class Pile {
      * Returns whether the given player can mulligan from this pile.
      */
     canMulligan(player: string) {
-        return !this.cards.isEmpty() && this.top().owner === player
+        return this.cards.length > 0 && this.top().owner === player
     }
 
     /**

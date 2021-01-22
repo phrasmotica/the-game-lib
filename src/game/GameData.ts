@@ -258,7 +258,7 @@ export class GameData implements IGameData {
      */
     getPileHistory(pileIndex: number) {
         let pile = this.piles[pileIndex]
-        return pile.cards.reveal()
+        return pile.cards
     }
 
     /**
@@ -278,7 +278,7 @@ export class GameData implements IGameData {
             return new MulliganResult(false)
         }
 
-        let top = pile.pop()
+        let top = pile.pop()!
 
         let hand = this.getHand(playerName)
         if (hand !== undefined) {
