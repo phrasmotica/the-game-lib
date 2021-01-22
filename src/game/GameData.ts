@@ -243,12 +243,12 @@ export class GameData implements IGameData {
     /**
      * Plays the given card on the given pile from the given player's hand.
      */
-    playCard(player: string, cardIndex: number, pileIndex: number) {
-        let hand = this.getHand(player)
-        let card = hand!.removeAt(cardIndex)
-
+    playCard(player: string, card: Card, pileIndex: number) {
         let pile = this.piles[pileIndex]
         pile.push(card, this.ruleSet)
+
+        let hand = this.getHand(player)
+        hand!.remove(card)
 
         this.cardsPlayedThisTurn++
     }

@@ -20,10 +20,9 @@ describe("hand", () => {
         let hand = new Hand(createCards([1, 2, 3]))
 
         // act
-        let card = hand.removeAt(1)
+        hand.remove(new Card(2))
 
         // assert
-        expect(card.value).toBe(2)
         expect(hand.cards.map(c => c.value)).toStrictEqual([1, 3])
     })
 })
