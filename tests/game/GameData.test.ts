@@ -5,10 +5,62 @@ import {
     createGameData,
     createHand,
     createPile,
+    createPiles,
     createRuleSet
 } from "../TestHelpers"
 
 describe("game data", () => {
+    let canMulliganTests = [
+        {
+            limit: 1,
+            cardsMulliganed: 0,
+            expectedCanMulligan: true,
+        },
+        {
+            limit: 1,
+            cardsMulliganed: 1,
+            expectedCanMulligan: false,
+        },
+    ]
+
+    canMulliganTests.forEach(t =>
+        it("allows taking a mulligan according to the limit", () => {
+            // arrange
+            let gameData = createGameData({
+                ruleSet: createRuleSet({
+                    mulliganLimit: t.limit,
+                }),
+                cardsMulliganed: t.cardsMulliganed,
+            })
+
+            // act
+            let canMulligan = gameData.canMulligan()
+
+            // assert
+            expect(canMulligan).toBe(t.expectedCanMulligan)
+        })
+    )
+
+    it("returns the top card of a pile to the player's hand when they mulligan", () => {
+        // arrange
+        let gameData = createGameData({
+            piles: [createPile({
+                cards: [20, 30, 40]
+            })],
+            hands: {
+                "player1": createHand([41, 42, 43]),
+            }
+        })
+
+        // act
+        let result = gameData.mulligan(0, "player1")
+
+        // assert
+        expect(result.card).toBe(40)
+        expect(result.previousCard).toBe(30)
+        expect(gameData.getHand("player1")!.cards).toStrictEqual([41, 42, 43, 40])
+    })
+
     it("is won when the deck and the players' hands are empty", () => {
         // arrange
         let gameData = createGameData({

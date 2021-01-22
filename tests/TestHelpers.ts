@@ -49,11 +49,13 @@ export const createRuleSet = (
     args: {
         jumpBackSize?: number,
         gameMode?: GameMode,
+        mulliganLimit?: number,
     }
 ) => {
     return new RuleSetBuilder()
             .withJumpBackSize(args.jumpBackSize ?? 10)
             .withGameMode(args.gameMode ?? GameMode.Regular)
+            .withMulliganLimit(args.mulliganLimit ?? 0)
             .build()
 }
 
