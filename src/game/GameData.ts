@@ -44,7 +44,7 @@ export class GameData implements IGameData {
         public startingPlayer: string | undefined,
         public turnsPlayed: number,
         public currentPlayerIndex: number,
-        public cardToPlay: number | undefined,
+        public cardToPlay: Card | undefined,
         public cardsPlayedThisTurn: number,
         public cardsMulliganed: number,
     ) { }
@@ -236,7 +236,7 @@ export class GameData implements IGameData {
     /**
      * Sets the card to play.
      */
-    setCardToPlay(cardToPlay: number | undefined) {
+    setCardToPlay(cardToPlay: Card | undefined) {
         this.cardToPlay = cardToPlay
     }
 

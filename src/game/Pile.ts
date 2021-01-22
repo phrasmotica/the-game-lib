@@ -133,7 +133,7 @@ export class Pile {
      * Returns whether this pile is on fire.
      */
     isOnFire(ruleSet: RuleSet) {
-        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.top().value)
+        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.top())
     }
 
     /**
@@ -148,7 +148,7 @@ export class Pile {
      */
     endTurn(ruleSet: RuleSet) {
         if (ruleSet.isOnFire()) {
-            if (ruleSet.cardIsOnFire(this.top().value)) {
+            if (ruleSet.cardIsOnFire(this.top())) {
                 this.turnsOnFire++
             }
             else if (this.turnsOnFire > 0) {

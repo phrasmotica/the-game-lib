@@ -20,7 +20,7 @@ export const createGameData = (
         startingPlayer?: string,
         turnsPlayed?: number,
         currentPlayerIndex?: number,
-        cardToPlay?: number,
+        cardToPlay?: Card
         cardsPlayedThisTurn?: number,
         cardsMulliganed?: number,
     }

@@ -1,3 +1,5 @@
+import { Card } from "./Card"
+
 /**
  * Represents the possible game modes.
  */
@@ -52,9 +54,9 @@ export class RuleSet implements IRuleSet {
     gameMode: GameMode
 
     /**
-     * The cards that are on fire.
+     * The values of cards that are on fire.
      */
-    onFireCards: number[]
+    onFireCardValues: number[]
 
     /**
      * Whether the players can view pile history.
@@ -77,7 +79,7 @@ export class RuleSet implements IRuleSet {
         this.cardsPerTurn = 2
         this.cardsPerTurnInEndgame = 1
         this.gameMode = GameMode.Regular
-        this.onFireCards = [22, 33, 44, 55, 66, 77]
+        this.onFireCardValues = [22, 33, 44, 55, 66, 77]
         this.canViewPileHistory = false
         this.mulliganLimit = 0
     }
@@ -126,8 +128,8 @@ export class RuleSet implements IRuleSet {
     /**
      * Returns whether the given card is on fire.
      */
-    cardIsOnFire(card: number) {
-        return this.onFireCards.includes(card)
+    cardIsOnFire(card: Card) {
+        return this.onFireCardValues.includes(card.value)
     }
 }
 
