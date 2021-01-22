@@ -85,9 +85,9 @@ export class Stack<T> {
     }
 
     /**
-     * Returns the entire stack.
+     * Returns the stack.
      */
     reveal() {
-        return this.stack
+        return this.stack.slice(0, this.size)
     }
 }
