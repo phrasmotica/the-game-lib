@@ -40,11 +40,12 @@ export class Hand {
     }
 
     /**
-     * Removes the card at the given index from the hand.
+     * Removes the card at the given index from the hand and returns it.
      */
-    remove(card: Card) {
-        let index = this.cards.indexOf(card)
+    removeAt(index: number) {
+        let card = this.cards[index]
         this.cards.splice(index, 1)
+        return card
     }
 
     /**
