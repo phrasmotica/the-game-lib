@@ -37,7 +37,6 @@ export class Pile {
      * Creates a new pile.
      */
     constructor(
-        public index: number,
         public start: number,
         public direction: Direction,
         cards?: number[],
@@ -52,7 +51,6 @@ export class Pile {
      */
     static from(pile: Pile) {
         return new Pile(
-            pile.index,
             pile.start,
             pile.direction,
             pile.cards.stack,

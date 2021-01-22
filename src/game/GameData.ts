@@ -109,13 +109,12 @@ export class GameData implements IGameData {
         let piles = []
 
         for (let i = 0; i < ruleSet.pairsOfPiles; i++) {
-            let pile = new Pile(i, 1, Direction.Ascending)
+            let pile = new Pile(1, Direction.Ascending)
             piles.push(pile)
         }
 
         for (let j = 0; j < ruleSet.pairsOfPiles; j++) {
-            let index = ruleSet.pairsOfPiles + j
-            let pile = new Pile(index, ruleSet.topLimit, Direction.Descending)
+            let pile = new Pile(ruleSet.topLimit, Direction.Descending)
             piles.push(pile)
         }
 
@@ -247,17 +246,19 @@ export class GameData implements IGameData {
     }
 
     /**
-     * Returns the history of the given pile.
+     * Returns the history of the pile with the given index.
      */
-    getPileHistory(pile: Pile) {
+    getPileHistory(pileIndex: number) {
+        let pile = this.piles[pileIndex]
         return pile.cards.reveal()
     }
 
     /**
-     * Removes the top card from the given pile and returns it to the hand of
-     * the given player.
+     * Removes the top card from the pile with the given index and returns it to
+     * the hand of the given player.
      */
-    returnToHand(pile: Pile, playerName: string) {
+    returnToHand(pileIndex: number, playerName: string) {
+        let pile = this.piles[pileIndex]
         let top = pile.pop()
 
         let hand = this.getHand(playerName)

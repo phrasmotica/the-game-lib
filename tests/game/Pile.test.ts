@@ -1,5 +1,7 @@
-import { Direction, Pile } from "../../src/game/Pile"
+import { Direction } from "../../src/game/Pile"
 import { RuleSetBuilder } from "../../src/game/RuleSet"
+
+import { createPile } from "../TestHelpers"
 
 describe("pile", () => {
     let testCases = [
@@ -56,7 +58,11 @@ describe("pile", () => {
     testCases.forEach(test => {
         it("can determine a valid card", () => {
             // arrange
-            let pile = new Pile(0, test.start, test.direction, test.pile)
+            let pile = createPile({
+                start: test.start,
+                direction: test.direction,
+                cards: test.pile,
+            })
 
             let ruleSet = new RuleSetBuilder()
                             .withJumpBackSize(test.jumpBackSize)

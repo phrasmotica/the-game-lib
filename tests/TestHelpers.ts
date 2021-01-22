@@ -43,10 +43,6 @@ const createPlayers = () => {
     return ["player1"]
 }
 
-const createSpectators = () => {
-    return ["spectator1"]
-}
-
 export const createRuleSet = (
     args: {
         jumpBackSize?: number,
@@ -95,7 +91,6 @@ export const createPile = (
     }
 ) => {
     return new Pile(
-        0,
         args.start ?? 1,
         args.direction ?? Direction.Ascending,
         args.cards ?? [20, 30, 40],
