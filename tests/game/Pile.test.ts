@@ -1,8 +1,8 @@
 import { Card } from "../../src/game/Card"
-import { Direction } from "../../src/game/Pile"
+import { CardInfo, Direction } from "../../src/game/Pile"
 import { RuleSetBuilder } from "../../src/game/RuleSet"
 
-import { createCards, createPile } from "../TestHelpers"
+import { createCardsWithInfo, createPile } from "../TestHelpers"
 
 describe("pile", () => {
     let testCases = [
@@ -62,7 +62,7 @@ describe("pile", () => {
             let pile = createPile({
                 start: test.start,
                 direction: test.direction,
-                cards: createCards(test.pile),
+                cards: createCardsWithInfo(test.pile),
             })
 
             let ruleSet = new RuleSetBuilder()
@@ -79,23 +79,26 @@ describe("pile", () => {
         it("behaves like a stack", () => {
             // arrange
             let pile = createPile({
-                cards: createCards([2, 3, 4]),
+                cards: createCardsWithInfo([2, 3, 4]),
             })
 
             // act and assert
-            expect(pile.top().value).toBe(4)
-            expect(pile.pop().value).toBe(4)
-            expect(pile.top().value).toBe(3)
+            expect(pile.topCard().value).toBe(4)
+            expect(pile.popCard()!.value).toBe(4)
+            expect(pile.topCard().value).toBe(3)
         })
 
-        it("allows player to mulligan if the pile is not empty and the top card is theirs", () => {
+        it("allows player to mulligan if the pile is not empty and they played the top card on the same turn", () => {
             // arrange
             let pile = createPile({
-                cards: [new Card(30), new Card(40, "player1")]
+                cards: [
+                    [new Card(30), new CardInfo()],
+                    [new Card(40), new CardInfo("player1", 1)]
+                ]
             })
 
             // act
-            let success = pile.canMulligan("player1")
+            let success = pile.canMulligan("player1", 1)
 
             // assert
             expect(success).toBe(true)
@@ -104,11 +107,30 @@ describe("pile", () => {
         it("does not allow player to mulligan if the top card is not theirs", () => {
             // arrange
             let pile = createPile({
-                cards: [new Card(30), new Card(40, "player2")]
+                cards: [
+                    [new Card(30), new CardInfo()],
+                    [new Card(40), new CardInfo("player2", 1)]
+                ]
             })
 
             // act
-            let success = pile.canMulligan("player1")
+            let success = pile.canMulligan("player1", 1)
+
+            // assert
+            expect(success).toBe(false)
+        })
+
+        it("does not allow player to mulligan if they played the top card on a different turn", () => {
+            // arrange
+            let pile = createPile({
+                cards: [
+                    [new Card(30), new CardInfo()],
+                    [new Card(40), new CardInfo("player1", 2)]
+                ]
+            })
+
+            // act
+            let success = pile.canMulligan("player1", 1)
 
             // assert
             expect(success).toBe(false)
@@ -121,7 +143,7 @@ describe("pile", () => {
             })
 
             // act
-            let success = pile.canMulligan("player1")
+            let success = pile.canMulligan("player1", 1)
 
             // assert
             expect(success).toBe(false)

@@ -1,8 +1,13 @@
+import * as TypeMoq from "typemoq"
+
 import { Card } from "../../src/game/Card"
+import { Hand } from "../../src/game/Hand"
+import { Pile } from "../../src/game/Pile"
 import { GameMode } from "../../src/game/RuleSet"
 
 import {
     createCards,
+    createCardsWithInfo,
     createDeck,
     createGameData,
     createHand,
@@ -42,15 +47,27 @@ describe("game data", () => {
         })
     )
 
-    it("returns a mulliganed card to the player's hand", () => {
+    it("allows a mulligan if the pile allows it and the player has a hand", () => {
         // arrange
+        let pile = TypeMoq.Mock.ofType<Pile>()
+        pile
+            .setup(
+                m => m.canMulligan(
+                    TypeMoq.It.isAnyString(),
+                    TypeMoq.It.isAnyNumber(),
+                )
+            )
+            .returns(() => true)
+
+        pile.setup(m => m.popCard()).returns(() => new Card(40))
+        pile.setup(m => m.topCard()).returns(() => new Card(30))
+
+        let hand = TypeMoq.Mock.ofType<Hand>()
+        hand.setup(m => m.cards).returns(() => [new Card(20)])
+
         let gameData = createGameData({
-            piles: [createPile({
-                cards: [new Card(30), new Card(40, "player1")]
-            })],
-            hands: {
-                "player1": createHand(createCards([41, 42, 43])),
-            }
+            piles: [pile.object],
+            hands: { "player1": hand.object }
         })
 
         // act
@@ -60,22 +77,50 @@ describe("game data", () => {
         expect(result.success).toBe(true)
         expect(result.card!.value).toBe(40)
         expect(result.previousCard!.value).toBe(30)
-        expect(gameData.getHand("player1")!.cards).toHaveLength(4)
     })
 
-    it("does nothing if a mulligan is prevented", () => {
+    it("prevents a mulligan if the pile prevents it", () => {
         // arrange
+        let pile = TypeMoq.Mock.ofType<Pile>()
+        pile
+            .setup(
+                m => m.canMulligan(
+                    TypeMoq.It.isAnyString(),
+                    TypeMoq.It.isAnyNumber(),
+                )
+            )
+            .returns(() => false)
+
+        let gameData = createGameData({ piles: [pile.object] })
+
+        // act
+        let result = gameData.mulligan(0, "player1")
+
+        // assert
+        expect(result.success).toBe(false)
+    })
+
+    it("prevents a mulligan if the player has no hand", () => {
+        // arrange
+        let pile = TypeMoq.Mock.ofType<Pile>()
+        pile
+            .setup(
+                m => m.canMulligan(
+                    TypeMoq.It.isAnyString(),
+                    TypeMoq.It.isAnyNumber(),
+                )
+            )
+            .returns(() => true)
+
         let gameData = createGameData({
-            piles: [createPile({
-                cards: [new Card(30), new Card(40, "player2")]
-            })],
+            piles: [pile.object],
             hands: {
-                "player1": createHand(createCards([41, 42, 43])),
+                "player1": createHand()
             }
         })
 
         // act
-        let result = gameData.mulligan(0, "player1")
+        let result = gameData.mulligan(0, "player2")
 
         // assert
         expect(result.success).toBe(false)
@@ -133,11 +178,11 @@ describe("game data", () => {
             }),
             piles: [
                 createPile({
-                    cards: createCards([20, 30, 40, 44]),
+                    cards: createCardsWithInfo([20, 30, 40, 44]),
                     turnsOnFire: 2,
                 }),
                 createPile({
-                    cards: createCards([35, 38]),
+                    cards: createCardsWithInfo([35, 38]),
                     turnsOnFire: 0,
                 }),
             ],
@@ -158,7 +203,7 @@ describe("game data", () => {
                 "player1": createHand(createCards([41, 42, 43]))
             },
             piles: [createPile({
-                cards: createCards([20, 30, 40, 50]),
+                cards: createCardsWithInfo([20, 30, 40, 50]),
             })],
         })
 
@@ -177,7 +222,7 @@ describe("game data", () => {
                 "player1": createHand(createCards([41, 42, 51]))
             },
             piles: [createPile({
-                cards: createCards([20, 30, 40, 50]),
+                cards: createCardsWithInfo([20, 30, 40, 50]),
             })],
         })
 
@@ -196,7 +241,7 @@ describe("game data", () => {
                 "player1": createHand(createCards([41, 42, 43]))
             },
             piles: [createPile({
-                cards: createCards([20, 30, 40, 50]),
+                cards: createCardsWithInfo([20, 30, 40, 50]),
             })],
         })
 
@@ -215,7 +260,7 @@ describe("game data", () => {
                 "player1": createHand(createCards([41, 42, 51]))
             },
             piles: [createPile({
-                cards: createCards([20, 30, 40, 50]),
+                cards: createCardsWithInfo([20, 30, 40, 50]),
             })],
         })
 

@@ -2,7 +2,7 @@ import { Card } from "../src/game/Card"
 import { Deck } from "../src/game/Deck"
 import { GameData, PlayerHandMap } from "../src/game/GameData"
 import { Hand } from "../src/game/Hand"
-import { Direction, Pile } from "../src/game/Pile"
+import { CardInfo, Direction, Pile } from "../src/game/Pile"
 import { GameMode, RuleSet, RuleSetBuilder } from "../src/game/RuleSet"
 
 import { Vote, VoteCalculationMethod, VoteMap } from "../src/voting/Vote"
@@ -80,7 +80,7 @@ export const createPiles = (
     args: {
         start?: number,
         direction?: Direction,
-        cards?: Card[],
+        cards?: [Card, CardInfo][],
     }
 ) => {
     return [createPile(args)]
@@ -90,16 +90,20 @@ export const createPile = (
     args: {
         start?: number,
         direction?: Direction,
-        cards?: Card[],
+        cards?: [Card, CardInfo][],
         turnsOnFire?: number,
     }
 ) => {
     return new Pile(
         args.start ?? 1,
         args.direction ?? Direction.Ascending,
-        args.cards ?? createCards([20, 30, 40]),
+        args.cards ?? createCardsWithInfo([20, 30, 40]),
         args.turnsOnFire
     )
+}
+
+export const createCardsWithInfo = (values: number[]) => {
+    return values.map(v => <[Card, CardInfo]>[new Card(v), new CardInfo()])
 }
 
 export const createCards = (values: number[]) => {

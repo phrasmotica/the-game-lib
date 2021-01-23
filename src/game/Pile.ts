@@ -19,13 +19,23 @@ export enum PileState {
 }
 
 /**
+ * Represents info about a card that was played on a pile.
+ */
+export class CardInfo{
+    constructor(
+        public owner?: string,
+        public turnPlayed?: number,
+    ) { }
+}
+
+/**
  * Represents a pile.
  */
 export class Pile {
     /**
      * The cards in the pile.
      */
-    cards: Card[]
+    cards: [Card, CardInfo][]
 
     /**
      * The number of turns that this pile has been on fire for.
@@ -38,7 +48,7 @@ export class Pile {
     constructor(
         public start: number,
         public direction: Direction,
-        cards?: Card[],
+        cards?: [Card, CardInfo][],
         turnsOnFire?: number,
     ) {
         this.cards = cards || []
@@ -52,7 +62,7 @@ export class Pile {
         return new Pile(
             pile.start,
             pile.direction,
-            pile.cards.map(c => Card.from(c)),
+            pile.cards.map(c => [Card.from(c[0]), c[1]]),
             pile.turnsOnFire,
         )
     }
@@ -60,9 +70,10 @@ export class Pile {
     /**
      * Adds a card from the given owner to the pile, if possible.
      */
-    push(card: Card, ruleSet: RuleSet) {
+    push(card: Card, player: string, turnCounter: number, ruleSet: RuleSet) {
         if (this.canBePlayed(card, ruleSet)) {
-            this.cards.push(card)
+            let cardInfo = new CardInfo(player, turnCounter)
+            this.cards.push([card, cardInfo])
             return true
         }
 
@@ -72,19 +83,34 @@ export class Pile {
     /**
      * Removes the card on the top of the pile and returns it.
      */
-    pop() {
-        return this.cards.pop()
+    popCard() {
+        if (this.cards.length <= 0) {
+            return undefined
+        }
+
+        return this.cards.pop()![0]
     }
 
     /**
      * Returns the card on the top of the pile.
      */
-    top() {
+    topCard() {
         if (this.cards.length <= 0) {
             return new Card(this.start)
         }
 
-        return this.cards[this.cards.length - 1]
+        return this.cards[this.cards.length - 1][0]
+    }
+
+    /**
+     * Returns info about the card on the top of the pile.
+     */
+    topCardInfo() {
+        if (this.cards.length <= 0) {
+            return undefined
+        }
+
+        return this.cards[this.cards.length - 1][1]
     }
 
     /**
@@ -92,7 +118,7 @@ export class Pile {
      */
     canBePlayed(card: Card, ruleSet: RuleSet) {
         let cardValue = card.value
-        let topValue = this.top().value
+        let topValue = this.topCard().value
 
         if (this.direction === Direction.Ascending) {
             return cardValue > topValue || cardValue === topValue - ruleSet.jumpBackSize
@@ -102,10 +128,16 @@ export class Pile {
     }
 
     /**
-     * Returns whether the given player can mulligan from this pile.
+     * Returns whether the given player can mulligan from this pile on the given
+     * turn.
      */
-    canMulligan(player: string) {
-        return this.cards.length > 0 && this.top().owner === player
+    canMulligan(player: string, turnCounter: number) {
+        if (this.cards.length <= 0) {
+            return false
+        }
+
+        let cardInfo = this.topCardInfo()!
+        return cardInfo.owner === player && cardInfo.turnPlayed === turnCounter
     }
 
     /**
@@ -127,7 +159,7 @@ export class Pile {
      * Returns whether this pile is on fire.
      */
     isOnFire(ruleSet: RuleSet) {
-        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.top())
+        return ruleSet.isOnFire() && ruleSet.cardIsOnFire(this.topCard())
     }
 
     /**
@@ -142,7 +174,7 @@ export class Pile {
      */
     endTurn(ruleSet: RuleSet) {
         if (ruleSet.isOnFire()) {
-            if (ruleSet.cardIsOnFire(this.top())) {
+            if (ruleSet.cardIsOnFire(this.topCard())) {
                 this.turnsOnFire++
             }
             else if (this.turnsOnFire > 0) {

@@ -42,7 +42,7 @@ export class GameData implements IGameData {
         private hasStarted: boolean,
         public startingPlayerVote: Vote,
         public startingPlayer: string | undefined,
-        public turnsPlayed: number,
+        public turnCounter: number,
         public currentPlayerIndex: number,
         public cardToPlay: Card | undefined,
         public cardsPlayedThisTurn: number,
@@ -93,7 +93,7 @@ export class GameData implements IGameData {
             gameData.hasStarted,
             Vote.from(gameData.startingPlayerVote),
             gameData.startingPlayer,
-            gameData.turnsPlayed,
+            gameData.turnCounter,
             gameData.currentPlayerIndex,
             gameData.cardToPlay,
             gameData.cardsPlayedThisTurn,
@@ -168,9 +168,7 @@ export class GameData implements IGameData {
      * Creates a hand for the rule set from the given deck.
      */
     dealHand(playerName: string) {
-        let cards = this.deck.draw(this.ruleSet.handSize)
-        cards.forEach(c => c.owner = playerName)
-        this.hands[playerName] = new Hand(cards)
+        this.hands[playerName] = new Hand(this.deck.draw(this.ruleSet.handSize))
     }
 
     /**
@@ -216,6 +214,13 @@ export class GameData implements IGameData {
     }
 
     /**
+     * Starts the turn.
+     */
+    startTurn() {
+        this.turnCounter++
+    }
+
+    /**
      * Returns whether this game is in progress.
      */
     isInProgress() {
@@ -245,7 +250,7 @@ export class GameData implements IGameData {
      */
     playCard(player: string, card: Card, pileIndex: number) {
         let pile = this.piles[pileIndex]
-        pile.push(card, this.ruleSet)
+        pile.push(card, player, this.turnCounter, this.ruleSet)
 
         let hand = this.getHand(player)
         hand!.remove(card)
@@ -274,20 +279,21 @@ export class GameData implements IGameData {
      */
     mulligan(pileIndex: number, playerName: string) {
         let pile = this.piles[pileIndex]
-        if (!pile.canMulligan(playerName)) {
+        if (!pile.canMulligan(playerName, this.turnCounter)) {
             return new MulliganResult(false)
         }
 
-        let top = pile.pop()!
-
         let hand = this.getHand(playerName)
-        if (hand !== undefined) {
-            hand.add(top)
+        if (hand === undefined) {
+            return new MulliganResult(false)
         }
+
+        let topCard = pile.popCard()!
+        hand.add(topCard)
 
         this.cardsMulliganed++
         this.cardsPlayedThisTurn--
-        return new MulliganResult(true, top, pile.top())
+        return new MulliganResult(true, topCard, pile.topCard())
     }
 
     /**
@@ -424,7 +430,7 @@ export class GameData implements IGameData {
     clear() {
         this.startingPlayer = undefined
         this.startingPlayerVote = Vote.empty()
-        this.turnsPlayed = 0
+        this.turnCounter = 0
         this.hasStarted = false
         this.cardToPlay = undefined
         this.cardsPlayedThisTurn = 0
