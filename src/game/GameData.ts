@@ -161,6 +161,7 @@ export class GameData implements IGameData {
             this.startingPlayerVote.setVoters(players)
         }
 
+        this.startTurn()
         this.hasStarted = true
     }
 
