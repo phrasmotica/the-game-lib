@@ -9,7 +9,7 @@ describe("hand", () => {
         let hand = new Hand(createCards([1, 2, 3]))
 
         // act
-        hand.add(new Card(4))
+        hand.add(new Card(4, false))
 
         // assert
         expect(hand.cards.map(c => c.value)).toStrictEqual([1, 2, 3, 4])
@@ -20,7 +20,7 @@ describe("hand", () => {
         let hand = new Hand(createCards([1, 2, 3]))
 
         // act
-        hand.remove(new Card(2))
+        hand.remove(new Card(2, false))
 
         // assert
         expect(hand.cards.map(c => c.value)).toStrictEqual([1, 3])

@@ -59,11 +59,11 @@ describe("game data", () => {
             )
             .returns(() => true)
 
-        pile.setup(m => m.popCard()).returns(() => new Card(40))
-        pile.setup(m => m.topCard()).returns(() => new Card(30))
+        pile.setup(m => m.popCard()).returns(() => new Card(40, false))
+        pile.setup(m => m.topCard()).returns(() => new Card(30, false))
 
         let hand = TypeMoq.Mock.ofType<Hand>()
-        hand.setup(m => m.cards).returns(() => [new Card(20)])
+        hand.setup(m => m.cards).returns(() => [new Card(20, false)])
 
         let gameData = createGameData({
             piles: [pile.object],
@@ -76,6 +76,7 @@ describe("game data", () => {
         // assert
         expect(result.success).toBe(true)
         expect(result.card!.value).toBe(40)
+        expect(result.card!.revealed).toBe(true)
         expect(result.previousCard!.value).toBe(30)
     })
 

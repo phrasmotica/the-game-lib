@@ -286,6 +286,7 @@ export class GameData implements IGameData {
         }
 
         let topCard = pile.popCard()!
+        topCard.revealed = true
         hand.add(topCard)
 
         this.cardsMulliganed++

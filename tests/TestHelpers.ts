@@ -101,11 +101,11 @@ export const createPile = (
 }
 
 export const createCardsWithInfo = (values: number[]) => {
-    return values.map(v => <[Card, CardInfo]>[new Card(v), new CardInfo()])
+    return values.map(v => <[Card, CardInfo]>[new Card(v, false), new CardInfo()])
 }
 
 export const createCards = (values: number[]) => {
-    return values.map(v => new Card(v))
+    return values.map(v => new Card(v, false))
 }
 
 export const createVote = (

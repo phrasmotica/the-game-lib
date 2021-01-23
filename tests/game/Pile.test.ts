@@ -70,7 +70,7 @@ describe("pile", () => {
                             .build()
 
             // act
-            let canBePlayed = pile.canBePlayed(new Card(test.cardValue), ruleSet)
+            let canBePlayed = pile.canBePlayed(new Card(test.cardValue, false), ruleSet)
 
             // assert
             expect(canBePlayed).toBe(test.expected)
@@ -92,8 +92,8 @@ describe("pile", () => {
             // arrange
             let pile = createPile({
                 cards: [
-                    [new Card(30), new CardInfo()],
-                    [new Card(40), new CardInfo("player1", 1)]
+                    [new Card(30, false), new CardInfo()],
+                    [new Card(40, false), new CardInfo("player1", 1)]
                 ]
             })
 
@@ -108,8 +108,8 @@ describe("pile", () => {
             // arrange
             let pile = createPile({
                 cards: [
-                    [new Card(30), new CardInfo()],
-                    [new Card(40), new CardInfo("player2", 1)]
+                    [new Card(30, false), new CardInfo()],
+                    [new Card(40, false), new CardInfo("player2", 1)]
                 ]
             })
 
@@ -124,8 +124,8 @@ describe("pile", () => {
             // arrange
             let pile = createPile({
                 cards: [
-                    [new Card(30), new CardInfo()],
-                    [new Card(40), new CardInfo("player1", 2)]
+                    [new Card(30, false), new CardInfo()],
+                    [new Card(40, false), new CardInfo("player1", 2)]
                 ]
             })
 
