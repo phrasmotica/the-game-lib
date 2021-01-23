@@ -39,7 +39,6 @@ export class GameData implements IGameData {
         public deck: Deck,
         private hands: PlayerHandMap,
         public piles: Pile[],
-        private hasStarted: boolean,
         public startingPlayerVote: Vote,
         public startingPlayer: string | undefined,
         public turnCounter: number,
@@ -69,7 +68,6 @@ export class GameData implements IGameData {
             deck,
             {},
             piles,
-            false,
             Vote.empty(),
             undefined,
             0,
@@ -90,7 +88,6 @@ export class GameData implements IGameData {
             Deck.from(gameData.deck),
             gameData.hands,
             gameData.piles.map(Pile.from),
-            gameData.hasStarted,
             Vote.from(gameData.startingPlayerVote),
             gameData.startingPlayer,
             gameData.turnCounter,
@@ -162,7 +159,6 @@ export class GameData implements IGameData {
         }
 
         this.startTurn()
-        this.hasStarted = true
     }
 
     /**
@@ -225,7 +221,7 @@ export class GameData implements IGameData {
      * Returns whether this game is in progress.
      */
     isInProgress() {
-        return this.hasStarted && this.startingPlayerChosen()
+        return this.turnCounter > 0 && this.startingPlayerChosen()
     }
 
     /**
@@ -432,7 +428,6 @@ export class GameData implements IGameData {
         this.startingPlayer = undefined
         this.startingPlayerVote = Vote.empty()
         this.turnCounter = 0
-        this.hasStarted = false
         this.cardToPlay = undefined
         this.cardsPlayedThisTurn = 0
         this.cardsMulliganed = 0
