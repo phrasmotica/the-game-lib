@@ -19,7 +19,7 @@ export class Deck {
         let cards = []
 
         for (let i = min; i < max; i++) {
-            cards.push(new Card(i))
+            cards.push(new Card(i, false))
         }
 
         return new Deck(cards)

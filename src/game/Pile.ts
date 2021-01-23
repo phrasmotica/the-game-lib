@@ -96,7 +96,7 @@ export class Pile {
      */
     topCard() {
         if (this.cards.length <= 0) {
-            return new Card(this.start)
+            return new Card(this.start, false)
         }
 
         return this.cards[this.cards.length - 1][0]
