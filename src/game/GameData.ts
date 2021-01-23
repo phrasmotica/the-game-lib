@@ -286,6 +286,7 @@ export class GameData implements IGameData {
         }
 
         this.cardsMulliganed++
+        this.cardsPlayedThisTurn--
         return new MulliganResult(true, top, pile.top())
     }
 
