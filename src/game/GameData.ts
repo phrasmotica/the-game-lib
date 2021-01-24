@@ -31,6 +31,11 @@ export enum GameStartResult {
  */
 export class GameData implements IGameData {
     /**
+     * List of the players who passed on their last turn.
+     */
+    private passedLastTurn: string[]
+
+    /**
      * Constructor.
      */
     constructor(
@@ -46,7 +51,9 @@ export class GameData implements IGameData {
         public cardToPlay: Card | undefined,
         public cardsPlayedThisTurn: number,
         public cardsMulliganed: number,
-    ) { }
+    ) {
+        this.passedLastTurn = []
+    }
 
     /**
      * Returns a default game data object.
@@ -369,20 +376,7 @@ export class GameData implements IGameData {
             return true
         }
 
-        let nonEmptyHands = this.enumerateHands().filter(h => !h.isEmpty())
-        if (nonEmptyHands.length <= 0) {
-            return !this.deck.isEmpty()
-        }
-
-        let cardCanBePlayed = nonEmptyHands.some(
-            h => h.cards.some(
-                c => this.piles.some(
-                    p => p.canBePlayed(c, this.ruleSet)
-                )
-            )
-        )
-
-        return !cardCanBePlayed
+        return this.players.every(p => this.passedLastTurn.includes(p))
     }
 
     /**
@@ -401,6 +395,27 @@ export class GameData implements IGameData {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Passes the given player's turn.
+     */
+    passTurn(player: string) {
+        let passedLastTurn = this.passedLastTurn.includes(player)
+        if (!passedLastTurn) {
+            this.passedLastTurn.push(player)
+        }
+    }
+
+    /**
+     * Clears the passed turn for the given player if necessary.
+     */
+    clearPassedTurn(player: string) {
+        let passedLastTurn = this.passedLastTurn.includes(player)
+        if (passedLastTurn) {
+            let i = this.passedLastTurn.indexOf(player)
+            this.passedLastTurn.splice(i, 1)
         }
     }
 

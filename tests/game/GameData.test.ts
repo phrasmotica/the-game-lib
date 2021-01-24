@@ -173,21 +173,12 @@ describe("game data", () => {
 
     it("is lost in On Fire mode if a pile is destroyed", () => {
         // arrange
-        let gameData = createGameData({
-            ruleSet: createRuleSet({
-                gameMode: GameMode.OnFire,
-            }),
-            piles: [
-                createPile({
-                    cards: createCardsWithInfo([20, 30, 40, 44]),
-                    turnsOnFire: 2,
-                }),
-                createPile({
-                    cards: createCardsWithInfo([35, 38]),
-                    turnsOnFire: 0,
-                }),
-            ],
-        })
+        let destroyedPile = TypeMoq.Mock.ofType<Pile>()
+        destroyedPile
+            .setup(m => m.isDestroyed(TypeMoq.It.isAny()))
+            .returns(() => true)
+
+        let gameData = createGameData({ piles: [destroyedPile.object] })
 
         // act
         let isLost = gameData.isLost()
@@ -196,17 +187,16 @@ describe("game data", () => {
         expect(isLost).toBe(true)
     })
 
-    it("is lost when the deck is not empty and the players cannot play any cards", () => {
+    it("is lost if all players passed their last turn", () => {
         // arrange
         let gameData = createGameData({
-            deck: createDeck(createCards([46, 47, 48])),
-            hands: {
-                "player1": createHand(createCards([41, 42, 43]))
-            },
-            piles: [createPile({
-                cards: createCardsWithInfo([20, 30, 40, 50]),
-            })],
+            players: ["player1", "player2", "player3"],
+            piles: [],
         })
+
+        gameData.passTurn("player1")
+        gameData.passTurn("player2")
+        gameData.passTurn("player3")
 
         // act
         let isLost = gameData.isLost()
@@ -215,55 +205,15 @@ describe("game data", () => {
         expect(isLost).toBe(true)
     })
 
-    it("is not lost when the deck is not empty and the players can play a card", () => {
+    it("is not lost if not all players passed their last turn", () => {
         // arrange
         let gameData = createGameData({
-            deck: createDeck(createCards([46, 47, 48])),
-            hands: {
-                "player1": createHand(createCards([41, 42, 51]))
-            },
-            piles: [createPile({
-                cards: createCardsWithInfo([20, 30, 40, 50]),
-            })],
+            players: ["player1", "player2", "player3"],
+            piles: [],
         })
 
-        // act
-        let isLost = gameData.isLost()
-
-        // assert
-        expect(isLost).toBe(false)
-    })
-
-    it("is lost when the deck is empty and the players cannot play any cards", () => {
-        // arrange
-        let gameData = createGameData({
-            deck: createDeck([]),
-            hands: {
-                "player1": createHand(createCards([41, 42, 43]))
-            },
-            piles: [createPile({
-                cards: createCardsWithInfo([20, 30, 40, 50]),
-            })],
-        })
-
-        // act
-        let isLost = gameData.isLost()
-
-        // assert
-        expect(isLost).toBe(true)
-    })
-
-    it("is not lost when the deck is empty and the players can play a card", () => {
-        // arrange
-        let gameData = createGameData({
-            deck: createDeck([]),
-            hands: {
-                "player1": createHand(createCards([41, 42, 51]))
-            },
-            piles: [createPile({
-                cards: createCardsWithInfo([20, 30, 40, 50]),
-            })],
-        })
+        gameData.passTurn("player1")
+        gameData.passTurn("player2")
 
         // act
         let isLost = gameData.isLost()
