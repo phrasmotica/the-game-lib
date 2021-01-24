@@ -192,11 +192,8 @@ describe("game data", () => {
         let gameData = createGameData({
             players: ["player1", "player2", "player3"],
             piles: [],
+            passedLastTurn: ["player1", "player2", "player3"],
         })
-
-        gameData.passTurn("player1")
-        gameData.passTurn("player2")
-        gameData.passTurn("player3")
 
         // act
         let isLost = gameData.isLost()
@@ -210,10 +207,8 @@ describe("game data", () => {
         let gameData = createGameData({
             players: ["player1", "player2", "player3"],
             piles: [],
+            passedLastTurn: ["player1", "player2"],
         })
-
-        gameData.passTurn("player1")
-        gameData.passTurn("player2")
 
         // act
         let isLost = gameData.isLost()

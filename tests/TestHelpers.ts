@@ -21,6 +21,7 @@ export const createGameData = (
         cardToPlay?: Card
         cardsPlayedThisTurn?: number,
         cardsMulliganed?: number,
+        passedLastTurn?: string[],
     }
 ) => {
     return new GameData(
@@ -36,6 +37,7 @@ export const createGameData = (
         args.cardToPlay,
         args.cardsPlayedThisTurn ?? 0,
         args.cardsMulliganed ?? 0,
+        args.passedLastTurn ?? [],
     )
 }
 

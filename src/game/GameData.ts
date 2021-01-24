@@ -31,11 +31,6 @@ export enum GameStartResult {
  */
 export class GameData implements IGameData {
     /**
-     * List of the players who passed on their last turn.
-     */
-    private passedLastTurn: string[]
-
-    /**
      * Constructor.
      */
     constructor(
@@ -51,9 +46,8 @@ export class GameData implements IGameData {
         public cardToPlay: Card | undefined,
         public cardsPlayedThisTurn: number,
         public cardsMulliganed: number,
-    ) {
-        this.passedLastTurn = []
-    }
+        public passedLastTurn: string[],
+    ) { }
 
     /**
      * Returns a default game data object.
@@ -81,7 +75,8 @@ export class GameData implements IGameData {
             0,
             undefined,
             0,
-            0
+            0,
+            []
         )
     }
 
@@ -102,6 +97,7 @@ export class GameData implements IGameData {
             gameData.cardToPlay,
             gameData.cardsPlayedThisTurn,
             gameData.cardsMulliganed,
+            gameData.passedLastTurn,
         )
     }
 
@@ -376,7 +372,8 @@ export class GameData implements IGameData {
             return true
         }
 
-        return this.players.every(p => this.passedLastTurn.includes(p))
+        return this.players.length > 0
+            && this.players.every(p => this.passedLastTurn.includes(p))
     }
 
     /**
