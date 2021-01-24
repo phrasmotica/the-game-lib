@@ -445,6 +445,7 @@ export class GameData implements IGameData {
         this.cardsPlayedThisTurn = 0
         this.cardsMulliganed = 0
         this.currentPlayerIndex = 0
+        this.passedLastTurn = []
         this.players = []
 
         return true
